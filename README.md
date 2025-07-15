@@ -14,7 +14,7 @@ MindShield is a browser extension that helps protect your mind from adult conten
 
 ### Chrome/Chromium-based Browsers
 
-1. Download the latest `mindshield-chrome-X.zip` file from the [Releases](https://github.com/yourusername/mindshield/releases) page
+1. Download the latest `mindshield-chrome-X.zip` file from the [Releases](https://github.com/purr/MindShield/releases) page
 2. Unzip the file to a location on your computer
 3. Open Chrome and go to `chrome://extensions/`
 4. Enable "Developer Mode" by clicking the toggle in the top-right corner
@@ -23,19 +23,19 @@ MindShield is a browser extension that helps protect your mind from adult conten
 
 ### Firefox Desktop
 
-1. Download the latest `mindshield-firefox-X.zip` file from the [Releases](https://github.com/yourusername/mindshield/releases) page
+1. Download the latest `mindshield-firefox-X.zip` or `.xpi` file from the [Releases](https://github.com/purr/MindShield/releases) page
 2. Open Firefox and go to `about:addons`
 3. Click the gear icon and select "Install Add-on From File..."
-4. Select the downloaded zip file
+4. Select the downloaded file
 5. Follow the prompts to complete installation
 
 ### Firefox for Android
 
 1. Install Firefox Nightly from the Google Play Store
-2. Download the latest `mindshield-firefox-X.zip` file from the [Releases](https://github.com/yourusername/mindshield/releases) page
+2. Download the latest `mindshield-firefox-X.zip` or `.xpi` file from the [Releases](https://github.com/purr/MindShield/releases) page
 3. Open Firefox Nightly and navigate to `about:addons`
 4. Tap on the settings gear icon, then "Install Add-on From File..."
-5. Navigate to and select the downloaded zip file
+5. Navigate to and select the downloaded file
 6. Follow the prompts to complete installation
 
 ## Configuration
@@ -59,27 +59,17 @@ To modify these files, you'll need to edit them and then rebuild the extension.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/mindshield.git
-cd mindshield
+git clone https://github.com/purr/MindShield.git
+cd MindShield
 
 # Install dependencies
 yarn
 
-# Build for Chrome
-mkdir -p build/chrome
-cp -r manifest.json background.js popup icons config build/chrome/
-cd build/chrome
-web-ext build
-
-# Build for Firefox
-cd ../..
-mkdir -p build/firefox
-cp -r manifest.json background.js popup icons config build/firefox/
-cd build/firefox
-web-ext build
+# Build for Chrome and Firefox
+yarn package
 ```
 
-The built extensions will be in the `build/chrome/web-ext-artifacts` and `build/firefox/web-ext-artifacts` directories.
+The built extensions will be in the `dist/chrome` and `dist/firefox` directories.
 
 ## Contributing
 

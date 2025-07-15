@@ -61,6 +61,11 @@ jobs:
           # Move the CRX file to dist directory
           mv build/chrome.crx dist/chrome/mindshield.crx
 
+      - name: Create Firefox XPI
+        run: |
+          # Copy the Firefox ZIP to an XPI file
+          cp dist/firefox/mindshield-3.0.0.zip dist/firefox/mindshield-3.0.0.xpi
+
       - name: Rename artifacts for release
         run: |
           cp dist/chrome/mindshield-3.0.0.zip dist/chrome/mindshield-chrome-3.0.0.zip
@@ -78,7 +83,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mindshield-firefox
-          path: dist/firefox/*.zip
+          path: |
+            dist/firefox/*.zip
+            dist/firefox/*.xpi
 
       - name: Create Release
         id: create_release
@@ -93,5 +100,6 @@ jobs:
             dist/chrome/mindshield.crx
             dist/chrome/mindshield-chrome-3.0.0.zip
             dist/firefox/mindshield-firefox-3.0.0.zip
+            dist/firefox/mindshield-3.0.0.xpi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

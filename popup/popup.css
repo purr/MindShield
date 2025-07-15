@@ -1,0 +1,136 @@
+/* MindShield popup styles - Rosé Pine Theme */
+
+:root {
+  /* Rose Pine Base colors */
+  --base: #191724;
+  --surface: #1f1d2e;
+  --overlay: #26233a;
+  --muted: #6e6a86;
+  --subtle: #908caa;
+  --text: #e0def4;
+  --love: #eb6f92;
+  --gold: #f6c177;
+  --rose: #ebbcba;
+  --pine: #31748f;
+  --foam: #9ccfd8;
+  --iris: #c4a7e7;
+  --highlight-low: #21202e;
+  --highlight-med: #403d52;
+  --highlight-high: #524f67;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  width: 320px;
+  min-height: 250px;
+  color: var(--text);
+  background-color: var(--base);
+}
+
+.container {
+  padding: 16px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--highlight-med);
+}
+
+h1 {
+  font-size: 24px;
+  color: var(--rose);
+}
+
+.status {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.status-indicator {
+  display: inline-block;
+  padding: 8px 12px;
+  background-color: var(--pine);
+  border-radius: 20px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.status-indicator.inactive {
+  background-color: var(--love);
+  color: var(--text);
+}
+
+.stats {
+  background-color: var(--surface);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.stat-item:last-child {
+  margin-bottom: 0;
+}
+
+.stat-label {
+  font-weight: 500;
+  color: var(--subtle);
+}
+
+.stat-value {
+  color: var(--foam);
+  font-size: 14px;
+  text-align: right;
+}
+
+.actions {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn {
+  background-color: var(--iris);
+  color: var(--base);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--pine);
+  color: var(--text);
+}
+
+.btn:active {
+  background-color: var(--highlight-high);
+}
+
+.btn.secondary {
+  background-color: var(--highlight-med);
+  color: var(--text);
+}
+
+.btn.secondary:hover {
+  background-color: var(--highlight-high);
+}

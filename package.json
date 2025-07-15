@@ -1,0 +1,16 @@
+{
+  "name": "mindshield",
+  "version": "1.0.0",
+  "description": "Browser extension that blocks adult content and redirects to positive resources",
+  "scripts": {
+    "generate-icons": "python resize_icon.py",
+    "build": "node build.js",
+    "dev": "web-ext run --source-dir ./build/chrome",
+    "dev:firefox": "web-ext run --source-dir ./build/firefox -t firefox-desktop",
+    "dev:firefox-android": "web-ext run --source-dir ./build/firefox -t firefox-android",
+    "package": "npm run build && web-ext build --source-dir ./build/firefox --artifacts-dir ./dist/firefox && web-ext build --source-dir ./build/chrome --artifacts-dir ./dist/chrome"
+  },
+  "devDependencies": {
+    "web-ext": "^7.9.0"
+  }
+}

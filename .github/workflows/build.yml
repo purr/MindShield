@@ -7,6 +7,11 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Add explicit permissions block
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,36 +28,15 @@ jobs:
       - name: Install Node.js dependencies
         run: yarn install
 
-      - name: Create build directories
-        run: |
-          mkdir -p build/chrome
-          mkdir -p build/firefox
+      - name: Build and package extensions
+        run: yarn package
 
-      - name: Copy files for Chrome
+      - name: List build artifacts for debugging
         run: |
-          cp background.js build/chrome/
-          cp -r popup build/chrome/
-          cp -r config build/chrome/
-          cp -r icons build/chrome/
-          cp manifest.json build/chrome/
-
-      - name: Copy files for Firefox
-        run: |
-          cp background.js build/firefox/
-          cp -r popup build/firefox/
-          cp -r config build/firefox/
-          cp -r icons build/firefox/
-          cp manifest-firefox.json build/firefox/manifest.json
-
-      - name: Build Firefox extension
-        run: |
-          cd build/firefox
-          npx web-ext build --overwrite-dest
-
-      - name: Build Chrome extension (ZIP)
-        run: |
-          cd build/chrome
-          npx web-ext build --overwrite-dest
+          echo "Chrome artifacts:"
+          find dist/chrome -type f
+          echo "Firefox artifacts:"
+          find dist/firefox -type f
 
       - name: Install Chrome extension packaging tools
         run: |
@@ -82,14 +66,14 @@ jobs:
         with:
           name: mindshield-chrome
           path: |
-            build/chrome/web-ext-artifacts/*.zip
+            dist/chrome/*.zip
             dist/chrome/*.crx
 
       - name: Upload Firefox extension artifact
         uses: actions/upload-artifact@v4
         with:
           name: mindshield-firefox
-          path: build/firefox/web-ext-artifacts/*.zip
+          path: dist/firefox/*.zip
 
       - name: Create Release
         id: create_release
@@ -101,8 +85,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            build/chrome/web-ext-artifacts/mindshield-${{ github.run_number }}.zip
             dist/chrome/mindshield.crx
-            build/firefox/web-ext-artifacts/mindshield-${{ github.run_number }}.zip
+            dist/chrome/*.zip
+            dist/firefox/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
 {
   "name": "mindshield",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Browser extension that blocks adult content and redirects to positive resources",
   "scripts": {
     "generate-icons": "python resize_icon.py",

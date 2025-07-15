@@ -1,0 +1,150 @@
+name: Build Extension
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "yarn"
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pillow
+
+      - name: Install Node.js dependencies
+        run: yarn install
+
+      - name: Generate icons
+        run: python resize_icon.py
+
+      - name: Create build directories
+        run: |
+          mkdir -p build/chrome
+          mkdir -p build/firefox
+
+      - name: Copy files for Chrome
+        run: |
+          cp background.js build/chrome/
+          cp -r popup build/chrome/
+          cp -r config build/chrome/
+          cp -r icons build/chrome/
+          cp manifest.json build/chrome/
+
+      - name: Copy files for Firefox
+        run: |
+          cp background.js build/firefox/
+          cp -r popup build/firefox/
+          cp -r config build/firefox/
+          cp -r icons build/firefox/
+          cp manifest-firefox.json build/firefox/manifest.json
+
+      - name: Build Firefox extension
+        run: |
+          cd build/firefox
+          npx web-ext build --overwrite-dest
+
+      - name: Build Chrome extension (ZIP)
+        run: |
+          cd build/chrome
+          npx web-ext build --overwrite-dest
+
+      - name: Install Chrome extension packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl unzip xvfb
+          curl -L -o chrome-linux.zip https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chrome-linux64.zip
+          unzip -q chrome-linux.zip
+          echo '{"extensions": {"settings": {"extension-id": {"location": "unpacked"}}}}' > prefs.json
+
+      - name: Package Chrome extension as CRX
+        run: |
+          mkdir -p dist/chrome
+          # Generate a key for CRX packaging
+          openssl genrsa 2048 | openssl pkcs8 -topk8 -nocrypt -out key.pem
+
+          # Use Chrome to package the extension
+          xvfb-run ./chrome-linux64/chrome \
+            --pack-extension=build/chrome \
+            --pack-extension-key=key.pem \
+            --no-sandbox
+
+          # Move the CRX file to dist directory
+          mv build/chrome.crx dist/chrome/mindshield.crx
+
+      - name: Upload Chrome extension artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: mindshield-chrome
+          path: |
+            build/chrome/web-ext-artifacts/*.zip
+            dist/chrome/*.crx
+
+      - name: Upload Firefox extension artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mindshield-firefox
+          path: build/firefox/web-ext-artifacts/*.zip
+
+      - name: Create Release
+        id: create_release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Chrome ZIP Release Asset
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/chrome/web-ext-artifacts/mindshield-${{ github.run_number }}.zip
+          asset_name: mindshield-chrome-${{ github.run_number }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload Chrome CRX Release Asset
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/chrome/mindshield.crx
+          asset_name: mindshield-chrome-${{ github.run_number }}.crx
+          asset_content_type: application/x-chrome-extension
+
+      - name: Upload Firefox Release Asset
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/firefox/web-ext-artifacts/mindshield-${{ github.run_number }}.zip
+          asset_name: mindshield-firefox-${{ github.run_number }}.zip
+          asset_content_type: application/zip

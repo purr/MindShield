@@ -1,0 +1,51 @@
+# Build directories
+/build/
+/dist/
+
+# Node.js dependencies
+/node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.yarn-integrity
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.bak
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Web Extension Artifacts
+web-ext-artifacts/
